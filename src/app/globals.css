@@ -5,6 +5,15 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-canvas: var(--surface-canvas);
+  --color-ink: var(--text-ink);
+  --color-ink-muted: var(--text-ink-muted);
+  --color-rule: var(--border-rule);
+  --color-brand: var(--brand-evergreen);
+  --color-brand-soft: var(--brand-tint);
+  --color-caution: var(--status-caution);
+  --color-caution-soft: var(--status-caution-tint);
+  --shadow-dossier: 0 8px 32px -16px rgb(27 43 36 / 18%);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
@@ -49,6 +58,15 @@
 }
 
 :root {
+  /* Opt-in product tokens; existing platform theme remains unchanged. */
+  --surface-canvas: #f7f8f4;
+  --text-ink: #202d28;
+  --text-ink-muted: #58635d;
+  --border-rule: #dce1d9;
+  --brand-evergreen: #285442;
+  --brand-tint: #eaf0e9;
+  --status-caution: #79551f;
+  --status-caution-tint: #f7f1e5;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
