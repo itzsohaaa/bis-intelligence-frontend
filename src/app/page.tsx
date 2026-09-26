@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Instrument_Serif } from "next/font/google";
 import { ArrowDown, ArrowRight, BookOpen, Boxes, ClipboardCheck, FileSearch, Gem, Languages, Microscope, Scale, ShieldCheck, ShieldQuestion } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -6,6 +7,15 @@ import { ProductPreview } from "@/components/landing/product-preview";
 import { navigation } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import styles from "./landing.module.css";
+
+const editorial = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  weight: "400",
+  style: "normal",
+  subsets: ["latin"],
+  display: "optional",
+  adjustFontFallback: true,
+});
 
 const capabilities = [
   { title: "Standards Intelligence", icon: BookOpen, description: "Ask questions grounded in ingested standards documents.", emphasized: true, status: "Integrated · Ask BIS" },
@@ -37,7 +47,7 @@ function ExploreLink({ className }: { className?: string }) {
 
 export default function Home() {
   return (
-    <div className={cn(styles.landing, "bis-landing bg-canvas text-ink")}>
+    <div className={cn(styles.landing, editorial.variable, "bis-landing bg-canvas text-ink")}>
       <a href="#main-content" className="sr-only z-50 bg-white p-4 focus:not-sr-only focus:fixed focus:top-2 focus:left-2">Skip to content</a>
       <header className="border-b border-rule">
         <div className={cn(styles.container, "flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-5 max-sm:gap-x-3 max-sm:py-4")}>
@@ -59,8 +69,8 @@ export default function Home() {
         <section aria-labelledby="hero-title" className={cn(styles.container, "pt-12 pb-6 sm:pt-20 lg:pt-24")}>
           <p className={styles.eyebrow}><span className="mr-3 inline-block h-2 w-2 bg-brand" aria-hidden="true" />SIH26107 / Standards & compliance intelligence</p>
           <div className="bis-hero mt-7 grid items-center gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
-            <h1 id="hero-title" className="max-w-3xl text-[clamp(2.8rem,5.5vw,5rem)] leading-[1.06] font-medium tracking-[-0.055em]">
-              From product questions<br className="hidden sm:block" /> to <span className="text-brand">informed decisions.</span>
+            <h1 id="hero-title" className="bis-hero-title max-w-3xl">
+              From product <span className="whitespace-nowrap">questions to</span> <span className="bis-editorial whitespace-nowrap text-brand">informed decisions.</span>
             </h1>
             <div className="lg:pt-3">
               <p className="max-w-md text-lg leading-8 text-ink-muted">A clearer path through Indian Standards. Designed to connect applicability, certification, and testing—with evidence at every step.</p>
@@ -72,7 +82,7 @@ export default function Home() {
             </div>
           </div>
           <div className="mt-12 border-t border-rule pt-6 sm:mt-14">
-            <p className="mb-4 font-mono text-xs uppercase tracking-widest text-ink-muted">The journey we’re building</p>
+            <p className="mb-4 font-sans tabular-nums text-xs uppercase tracking-[var(--tracking-eyebrow)] text-ink-muted">The journey we’re building</p>
             <ol className="flex flex-wrap gap-x-4 gap-y-4 text-base sm:gap-y-3 sm:gap-x-6">
               {["Product", "Standard", "QCO", "Certification", "Testing", "Evidence"].map((step, index) => (
                 <li key={step} className="flex items-center gap-4 sm:gap-6">
@@ -104,7 +114,7 @@ export default function Home() {
                   <Icon aria-hidden="true" className={cn("mb-5 size-5", emphasized ? "stroke-2 text-brand" : "stroke-[1.5] text-ink-muted")} />
                   <h3 className={cn("text-base tracking-tight", emphasized ? "font-semibold text-brand" : "font-medium")}>{title}</h3>
                   <p className="mt-2 mb-5 text-sm leading-6 text-ink-muted">{description}</p>
-                  <p className="mt-auto font-mono text-xs leading-5 text-ink-muted">{status}</p>
+                  <p className="bis-meta mt-auto text-ink-muted">{status}</p>
                 </article>
               ))}
             </div>
@@ -121,11 +131,11 @@ export default function Home() {
             </div>
             <div>
               <div id="evidence-chain" className="scroll-mt-8 border border-rule bg-white p-5 sm:p-7">
-                <p className="mb-6 font-mono text-xs uppercase tracking-widest text-ink-muted">The evidence chain / intended traceability</p>
+                <p className="mb-6 font-sans tabular-nums text-xs uppercase tracking-[var(--tracking-eyebrow)] text-ink-muted">The evidence chain / intended traceability</p>
                 <ol className="grid grid-cols-2 gap-x-5 gap-y-6 sm:grid-cols-3">
                   {["Claim", "Evidence", "Document", "Page", "Clause", "Authority"].map((label, index) => (
                     <li key={label}>
-                      <div className="flex items-center justify-between border-b border-rule pb-2"><span className="font-mono text-xs text-ink-muted">0{index + 1}</span>{index < 5 && <ArrowRight className="size-3.5 text-ink-muted" aria-hidden="true" />}</div>
+                      <div className="flex items-center justify-between border-b border-rule pb-2"><span className="font-sans tabular-nums text-xs text-ink-muted">0{index + 1}</span>{index < 5 && <ArrowRight className="size-3.5 text-ink-muted" aria-hidden="true" />}</div>
                       <p className="mt-2 text-sm font-medium">{label}</p>
                     </li>
                   ))}
@@ -146,7 +156,7 @@ export default function Home() {
             <div className="flex flex-wrap items-end justify-between gap-5"><h2 id="workflow-title" className={styles.heading}>A considered path forward.</h2><Badge variant="outline" className="border-rule text-ink-muted">Intended workflow · in development</Badge></div>
             <ol className={cn(styles.workflow, "mt-10 grid gap-x-7 gap-y-8 sm:grid-cols-3 lg:grid-cols-6")}>
               {workflow.map(([title, description], index) => (
-                <li key={title} className="border-t border-rule pt-4"><span className="font-mono text-xs text-brand">0{index + 1}</span><h3 className="mt-5 text-sm font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-ink-muted sm:text-[13px]">{description}</p></li>
+                <li key={title} className="border-t border-rule pt-4"><span className="font-sans tabular-nums text-xs text-brand">0{index + 1}</span><h3 className="mt-5 text-sm font-semibold">{title}</h3><p className="mt-2 text-sm leading-6 text-ink-muted sm:text-[13px]">{description}</p></li>
               ))}
             </ol>
           </div>
@@ -154,7 +164,7 @@ export default function Home() {
 
         <section data-reveal aria-labelledby="cta-title" className="bg-brand text-white">
           <div className={cn(styles.container, "flex flex-wrap items-center justify-between gap-8 py-14 sm:py-20")}>
-            <div><p className="font-mono text-xs uppercase tracking-[0.16em] text-white/80">BIS Intelligence / Evidence-first workspace</p><h2 id="cta-title" className="mt-4 text-3xl leading-tight font-medium tracking-tight sm:text-4xl">Start with a question.<br />Build toward clarity.</h2><p className="mt-4 max-w-lg text-sm leading-6 text-white/80">Explore the workspace and the capabilities taking shape.</p></div>
+            <div><p className="font-sans tabular-nums text-xs uppercase tracking-[var(--tracking-eyebrow)] text-white/80">BIS Intelligence / Evidence-first workspace</p><h2 id="cta-title" className="mt-4 text-3xl leading-tight font-semibold tracking-tight sm:text-4xl">Start with a question.<br />Build toward clarity.</h2><p className="mt-4 max-w-lg text-sm leading-6 text-white/80">Explore the workspace and the capabilities taking shape.</p></div>
             <Link href={navigation.dashboard.href} className={cn(buttonVariants(), "h-12 rounded-md bg-white px-6 text-brand hover:bg-white/90")}>Enter the platform <ArrowRight aria-hidden="true" className="ml-3 size-4" /></Link>
           </div>
         </section>

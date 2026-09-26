@@ -6,7 +6,7 @@ import { safeSourceUrl } from "@/lib/bis/normalize";
 function inline(text: string): ReactNode[] {
   const tokens = text.split(/(`[^`\n]+`|\*\*[^*\n]+\*\*|__[^_\n]+__|\*[^*\n]+\*|\[[^\]\n]+\]\([^\s)]+\))/g);
   return tokens.map((token, index) => {
-    if (token.startsWith("`") && token.endsWith("`")) return <code key={index} className="rounded bg-canvas px-1 font-mono text-[0.9em]">{token.slice(1, -1)}</code>;
+    if (token.startsWith("`") && token.endsWith("`")) return <code key={index} className="rounded bg-canvas px-1 font-sans tabular-nums text-[0.9em]">{token.slice(1, -1)}</code>;
     if ((token.startsWith("**") && token.endsWith("**")) || (token.startsWith("__") && token.endsWith("__"))) return <strong key={index} className="font-semibold">{token.slice(2, -2)}</strong>;
     if (token.startsWith("*") && token.endsWith("*")) return <em key={index}>{token.slice(1, -1)}</em>;
     const link = token.match(/^\[([^\]]+)\]\(([^\s)]+)\)$/);

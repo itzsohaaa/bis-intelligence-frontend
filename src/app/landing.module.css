@@ -16,19 +16,20 @@
 
 .eyebrow {
   color: var(--text-ink-muted);
-  font-family: var(--font-geist-mono), monospace;
-  font-size: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow);
+  font-weight: 500;
   line-height: 1.8;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
 }
 
 .heading {
   margin-top: 1rem;
   font-size: var(--type-section);
-  font-weight: 500;
-  line-height: 1.15;
-  letter-spacing: -0.04em;
+  font-weight: 600;
+  line-height: 1.18;
+  letter-spacing: var(--tracking-heading);
   text-wrap: balance;
 }
 

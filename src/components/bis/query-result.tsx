@@ -31,7 +31,7 @@ export function QueryResultView({ result }: { result: QuerySuccess }) {
   };
   return <section aria-labelledby="answer-heading" className="bis-result min-w-0 space-y-8 text-ink">
     <header className={cn("space-y-4 rounded-md border p-5 sm:p-6", outcome.review ? "border-caution/25 bg-caution-soft" : "border-rule bg-brand-soft")}>
-      <p className="text-xs font-medium uppercase tracking-widest text-ink-muted">Response & evidence</p>
+      <p className="text-xs font-medium uppercase tracking-[var(--tracking-eyebrow)] text-ink-muted">Response & evidence</p>
       <h2 id="answer-heading" className={cn("flex items-start gap-3 text-xl font-semibold tracking-tight", outcome.review ? "text-caution" : "text-brand")}>
         {outcome.review ? <ShieldQuestion aria-hidden="true" focusable="false" className="mt-0.5 size-6 shrink-0" /> : <FileSearch aria-hidden="true" focusable="false" className="mt-0.5 size-6 shrink-0" />}
         <span>{data.decision === "qualified_answer" && !verification ? "Qualified Answer" : outcome.label}</span>

@@ -25,7 +25,7 @@ function PlatformNavigation({ pathname, onNavigate }: {
             className="bis-nav-link">
             <Icon aria-hidden="true" className="size-4 shrink-0" />
             <span className="flex-1">{label}</span>
-            {status === "planned" && <span className="text-xs font-normal">Planned</span>}
+            {status === "planned" && <span className="bis-meta">Planned</span>}
           </Link>
         );
       })}
@@ -53,12 +53,12 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-rule bg-white lg:flex xl:w-68">
         <Link href={navigation.dashboard.href} className="flex min-h-20 items-center gap-3 border-b px-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
           <ShieldCheck aria-hidden="true" className="size-7 shrink-0 text-brand" />
-          <span><span className="block font-semibold tracking-tight">BIS Intelligence</span><span className="text-xs text-muted-foreground">Standards. Evidence. Clarity.</span></span>
+          <span><span className="block font-semibold tracking-tight">BIS Intelligence</span><span className="bis-meta text-muted-foreground">Standards. Evidence. Clarity.</span></span>
         </Link>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <PlatformNavigation pathname={pathname} />
         </div>
-        <div className="border-t border-rule p-6"><p className="text-sm font-medium text-brand">Evidence at every step.</p><p className="mt-2 text-xs leading-5 text-ink-muted">Ask BIS is integrated. Other intelligence modules await backend availability.</p></div>
+        <div className="border-t border-rule p-6"><p className="text-sm font-medium text-brand">Evidence at every step.</p><p className="bis-meta mt-2 text-ink-muted">Ask BIS is integrated. Other intelligence modules await backend availability.</p></div>
       </aside>
       <header className="sticky top-0 z-20 flex min-h-18 items-center gap-3 border-b border-rule bg-canvas px-5 sm:px-8">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -74,7 +74,7 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
           </SheetContent>
         </Sheet>
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-ink-muted">BIS Intelligence</p>
+          <p className="bis-meta text-ink-muted">BIS Intelligence</p>
           <p className="text-sm font-medium leading-5">{currentPage?.label ?? "Platform"}</p>
         </div>
         <div className="hidden sm:block">{currentPage && <CapabilityStatus status={currentPage.status} />}</div>

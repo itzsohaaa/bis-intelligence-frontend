@@ -46,10 +46,10 @@ export function EvidenceList({ title, items }: { title: string; items: EvidenceR
       const href = source ? safeSourceUrl(source.value) : null;
       const metadata = fields.filter((field) => field.label !== "Excerpt" && field.label !== "Source URL");
       return <article key={index} className="bis-panel bis-panel-pad">
-        <p className="mb-4 font-mono text-xs text-ink-muted">{title === "Citations" ? "Citation" : "Source"} {index + 1}</p>
+        <p className="mb-4 bis-meta tabular-nums text-ink-muted">{title === "Citations" ? "Citation" : "Source"} {index + 1}</p>
         {metadata.length > 0 && <dl className="grid grid-cols-1 gap-x-6 gap-y-3 text-sm leading-6 sm:grid-cols-2">
           {metadata.map(({ label, value }) => <div key={label} className={label === "Title" || label === "Source file" ? "min-w-0 sm:col-span-2" : "min-w-0"}>
-            <dt className="text-xs text-ink-muted">{label}</dt>
+            <dt className="bis-meta text-ink-muted">{label}</dt>
             <dd className="mt-0.5 font-medium [overflow-wrap:anywhere]">{value}</dd>
           </div>)}
         </dl>}

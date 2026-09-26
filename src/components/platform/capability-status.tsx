@@ -11,5 +11,5 @@ const states = {
 
 export function CapabilityStatus({ status }: { status: Status }) {
   const { label, icon: Icon } = states[status];
-  return <Badge variant="outline" className="bis-status" data-capability={status}><Icon aria-hidden="true" />{label}</Badge>;
+  return <Badge variant="outline" className="bis-status text-[length:var(--type-meta)]" data-capability={status}><Icon aria-hidden="true" />{label}</Badge>;
 }

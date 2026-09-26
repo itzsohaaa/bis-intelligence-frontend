@@ -20,11 +20,11 @@ export function ModuleWorkspace({ page }: { page: ModulePage }) {
       </div>
       <div className="bis-panel-pad">
         <div className="mb-6 flex flex-wrap items-start justify-between gap-3"><h3 className="bis-card-title">{definition.workspaceTitle}</h3><span className="flex items-center gap-2 text-xs leading-5 text-ink-muted"><Layers aria-hidden="true" className="size-3.5" />Intended structure · no live results</span></div>
-        <dl className="grid gap-6 md:grid-cols-3">{definition.fields.map(([label, description], index) => <div key={label} className="border-t border-rule pt-4"><dt className="text-sm font-medium"><span aria-hidden="true" className="mr-3 font-mono text-xs text-brand">0{index + 1}</span>{label}</dt><dd className="bis-copy mt-3">{description}</dd></div>)}</dl>
+        <dl className="grid gap-6 md:grid-cols-3">{definition.fields.map(([label, description], index) => <div key={label} className="border-t border-rule pt-4"><dt className="text-sm font-medium"><span aria-hidden="true" className="mr-3 font-sans tabular-nums text-xs text-brand">0{index + 1}</span>{label}</dt><dd className="bis-copy mt-3">{description}</dd></div>)}</dl>
       </div>
     </section>
     <section aria-labelledby="module-workflow"><div className="mb-5 flex flex-wrap items-baseline justify-between gap-3"><h2 id="module-workflow" className="bis-section-title">The intended workflow</h2><p className="text-xs text-ink-muted">Subject to backend support</p></div>
-      <ol data-reveal className="bis-workflow bis-stagger">{definition.steps.map(([title, description], index) => <li key={title}><span className="pt-1 font-mono text-xs text-brand">0{index + 1}</span><div><h3 className="bis-card-title">{title}</h3><p className="bis-copy mt-1">{description}</p></div></li>)}</ol>
+      <ol data-reveal className="bis-workflow bis-stagger">{definition.steps.map(([title, description], index) => <li key={title}><span className="pt-1 font-sans tabular-nums text-xs text-brand">0{index + 1}</span><div><h3 className="bis-card-title">{title}</h3><p className="bis-copy mt-1">{description}</p></div></li>)}</ol>
     </section>
     <section data-reveal className="grid gap-6 border-t border-rule pt-7 sm:grid-cols-2" aria-label="Evidence and next steps">
       <div className="flex gap-3"><ShieldQuestion aria-hidden="true" className="mt-1 size-5 shrink-0 text-brand" /><div><h2 className="bis-card-title">Evidence before conclusions</h2><p className="bis-copy mt-2">Missing sources and unresolved checks must remain visible. Verification Required is a useful outcome.</p></div></div>
