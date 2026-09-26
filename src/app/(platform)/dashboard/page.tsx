@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CapabilityPlaceholder } from "@/components/platform/capability-placeholder";
+import { Dashboard } from "@/components/platform/dashboard";
 import { navigation } from "@/config/navigation";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <CapabilityPlaceholder page="dashboard" />;
+  return <Dashboard />;
 }

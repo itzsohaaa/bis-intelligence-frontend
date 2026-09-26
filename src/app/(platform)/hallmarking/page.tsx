@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CapabilityPlaceholder } from "@/components/platform/capability-placeholder";
+import { ModuleWorkspace } from "@/components/platform/module-workspace";
 import { navigation } from "@/config/navigation";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <CapabilityPlaceholder page="hallmarking" />;
+  return <ModuleWorkspace page="hallmarking" />;
 }

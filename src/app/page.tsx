@@ -8,13 +8,13 @@ import { cn } from "@/lib/utils";
 import styles from "./landing.module.css";
 
 const capabilities = [
-  { title: "Standards Intelligence", icon: BookOpen, description: "Ask questions grounded in ingested standards documents.", emphasized: true, status: "Query support · not connected" },
-  { title: "Product Applicability", icon: Boxes, description: "Connect product context to relevant standards and the reasons they apply.", emphasized: true, status: "Planned" },
-  { title: "QCO / Mandatory Status", icon: Scale, description: "Understand obligations through applicable orders and their effective dates.", emphasized: true, status: "Planned" },
-  { title: "Certification Guidance", icon: ClipboardCheck, description: "Navigate certification pathways and preparation requirements.", emphasized: false, status: "Planned" },
-  { title: "Laboratory Guidance", icon: Microscope, description: "Explore testing needs and relevant laboratory information.", emphasized: false, status: "Planned" },
-  { title: "Hallmarking", icon: Gem, description: "Find context for hallmarking requirements and related services.", emphasized: false, status: "Planned" },
-  { title: "Evidence Explorer", icon: FileSearch, description: "Keep source references, excerpts, and verification context beside the answer.", emphasized: true, status: "Evidence support · not connected" },
+  { title: "Standards Intelligence", icon: BookOpen, description: "Ask questions grounded in ingested standards documents.", emphasized: true, status: "Integrated · Ask BIS" },
+  { title: "Product Applicability", icon: Boxes, description: "Connect product context to relevant standards and the reasons they apply.", emphasized: true, status: "Backend-dependent" },
+  { title: "QCO / Mandatory Status", icon: Scale, description: "Understand obligations through applicable orders and their effective dates.", emphasized: true, status: "Backend-dependent" },
+  { title: "Certification Guidance", icon: ClipboardCheck, description: "Navigate certification pathways and preparation requirements.", emphasized: false, status: "Backend-dependent" },
+  { title: "Laboratory Guidance", icon: Microscope, description: "Explore testing needs and relevant laboratory information.", emphasized: false, status: "Backend-dependent" },
+  { title: "Hallmarking", icon: Gem, description: "Find context for hallmarking requirements and related services.", emphasized: false, status: "Backend-dependent" },
+  { title: "Evidence Explorer", icon: FileSearch, description: "Keep source references, excerpts, and verification context beside the answer.", emphasized: true, status: "Integrated · Ask BIS" },
   { title: "Multilingual Intelligence", icon: Languages, description: "Make standards easier to understand across languages, including Hindi.", emphasized: false, status: "Planned" },
 ] as const;
 
@@ -37,7 +37,7 @@ function ExploreLink({ className }: { className?: string }) {
 
 export default function Home() {
   return (
-    <div className={cn(styles.landing, "bg-canvas text-ink")}>
+    <div className={cn(styles.landing, "bis-landing bg-canvas text-ink")}>
       <a href="#main-content" className="sr-only z-50 bg-white p-4 focus:not-sr-only focus:fixed focus:top-2 focus:left-2">Skip to content</a>
       <header className="border-b border-rule">
         <div className={cn(styles.container, "flex flex-wrap items-center justify-between gap-x-6 gap-y-3 py-5 max-sm:gap-x-3 max-sm:py-4")}>
@@ -58,7 +58,7 @@ export default function Home() {
       <main id="main-content" tabIndex={-1}>
         <section aria-labelledby="hero-title" className={cn(styles.container, "pt-12 pb-6 sm:pt-20 lg:pt-24")}>
           <p className={styles.eyebrow}><span className="mr-3 inline-block h-2 w-2 bg-brand" aria-hidden="true" />SIH26107 / Standards & compliance intelligence</p>
-          <div className="mt-7 grid items-center gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
+          <div className="bis-hero mt-7 grid items-center gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-20">
             <h1 id="hero-title" className="max-w-3xl text-[clamp(2.8rem,5.5vw,5rem)] leading-[1.06] font-medium tracking-[-0.055em]">
               From product questions<br className="hidden sm:block" /> to <span className="text-brand">informed decisions.</span>
             </h1>
@@ -68,7 +68,7 @@ export default function Home() {
                 <ExploreLink />
                 <Link href={navigation.askBis.href} className="flex min-h-11 items-center gap-2 text-sm font-medium">Ask BIS <ArrowRight className="size-4" aria-hidden="true" /></Link>
               </div>
-              <p className="mt-4 text-sm leading-6 sm:text-[13px] sm:leading-5 text-ink-muted">Platform preview · live services are not connected yet</p>
+              <p className="mt-4 text-sm leading-6 sm:text-[13px] sm:leading-5 text-ink-muted">Ask BIS is integrated · service availability may vary</p>
             </div>
           </div>
           <div className="mt-12 border-t border-rule pt-6 sm:mt-14">
@@ -84,7 +84,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="product" aria-labelledby="product-title" className={cn(styles.container, styles.section)}>
+        <section data-reveal id="product" aria-labelledby="product-title" className={cn(styles.container, styles.section)}>
           <div className="mb-8 flex flex-wrap items-end justify-between gap-5">
             <div><p className={styles.eyebrow}>01 / Product intelligence</p><h2 id="product-title" className={styles.heading}>See the reasoning.<br />Not just the result.</h2></div>
             <p className="max-w-sm text-sm leading-6 text-ink-muted">A structured view of what applies, why it may apply, and what still needs verification.</p>
@@ -92,11 +92,11 @@ export default function Home() {
           <ProductPreview />
         </section>
 
-        <section id="capabilities" aria-labelledby="capabilities-title" className="border-y border-rule bg-white">
+        <section data-reveal id="capabilities" aria-labelledby="capabilities-title" className="border-y border-rule bg-white">
           <div className={cn(styles.container, styles.section)}>
             <div className="grid gap-5 lg:grid-cols-2">
               <div><p className={styles.eyebrow}>02 / Connected capabilities</p><h2 id="capabilities-title" className={styles.heading}>One platform.<br />A wider view of compliance.</h2></div>
-              <p className="max-w-md self-end text-sm leading-6 text-ink-muted lg:justify-self-end">Conversation is the starting point. The vision extends across the compliance journey. Document queries and evidence responses have backend support; this interface is not connected yet. Other workflows are planned.</p>
+              <p className="max-w-md self-end text-sm leading-6 text-ink-muted lg:justify-self-end">Conversation is the starting point. The vision extends across the compliance journey. Ask BIS connects document questions with evidence. Other modules await backend availability; multilingual intelligence remains planned.</p>
             </div>
             <div className="mt-10 grid gap-x-8 sm:grid-cols-2 lg:grid-cols-4">
               {capabilities.map(({ title, icon: Icon, description, status, emphasized }) => (
@@ -111,7 +111,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section id="trust" aria-labelledby="trust-title" className={cn(styles.container, styles.section)}>
+        <section data-reveal id="trust" aria-labelledby="trust-title" className={cn(styles.container, styles.section)}>
           <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
             <div>
               <p className={styles.eyebrow}>03 / Evidence first</p>
@@ -140,7 +140,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section aria-labelledby="workflow-title" className="border-t border-rule">
+        <section data-reveal aria-labelledby="workflow-title" className="border-t border-rule">
           <div className={cn(styles.container, styles.section)}>
             <p className={styles.eyebrow}>04 / How it works</p>
             <div className="flex flex-wrap items-end justify-between gap-5"><h2 id="workflow-title" className={styles.heading}>A considered path forward.</h2><Badge variant="outline" className="border-rule text-ink-muted">Intended workflow · in development</Badge></div>
@@ -152,9 +152,9 @@ export default function Home() {
           </div>
         </section>
 
-        <section aria-labelledby="cta-title" className="bg-brand text-white">
+        <section data-reveal aria-labelledby="cta-title" className="bg-brand text-white">
           <div className={cn(styles.container, "flex flex-wrap items-center justify-between gap-8 py-14 sm:py-20")}>
-            <div><p className="font-mono text-xs uppercase tracking-[0.16em] text-white/80">BIS Intelligence / Platform preview</p><h2 id="cta-title" className="mt-4 text-3xl leading-tight font-medium tracking-tight sm:text-4xl">Start with a question.<br />Build toward clarity.</h2><p className="mt-4 max-w-lg text-sm leading-6 text-white/80">Explore the workspace and the capabilities taking shape.</p></div>
+            <div><p className="font-mono text-xs uppercase tracking-[0.16em] text-white/80">BIS Intelligence / Evidence-first workspace</p><h2 id="cta-title" className="mt-4 text-3xl leading-tight font-medium tracking-tight sm:text-4xl">Start with a question.<br />Build toward clarity.</h2><p className="mt-4 max-w-lg text-sm leading-6 text-white/80">Explore the workspace and the capabilities taking shape.</p></div>
             <Link href={navigation.dashboard.href} className={cn(buttonVariants(), "h-12 rounded-md bg-white px-6 text-brand hover:bg-white/90")}>Enter the platform <ArrowRight aria-hidden="true" className="ml-3 size-4" /></Link>
           </div>
         </section>

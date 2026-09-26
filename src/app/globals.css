@@ -58,7 +58,7 @@
 }
 
 :root {
-  /* Opt-in product tokens; existing platform theme remains unchanged. */
+  /* Shared with the approved landing page. */
   --surface-canvas: #f7f8f4;
   --text-ink: #202d28;
   --text-ink-muted: #58635d;
@@ -67,6 +67,22 @@
   --brand-tint: #eaf0e9;
   --status-caution: #79551f;
   --status-caution-tint: #f7f1e5;
+  --surface-raised: #ffffff;
+  --surface-muted: #f0f3ed;
+  --product-radius: 0.5rem;
+  --product-width: 76rem;
+  --product-gutter: clamp(1.25rem, 3.5vw, 3rem);
+  --product-section-gap: clamp(2rem, 4vw, 3rem);
+  --type-section: clamp(1.875rem, 3.1vw, 2.75rem);
+  --motion-micro: 180ms;
+  --motion-standard: 260ms;
+  --motion-entrance: 480ms;
+  --motion-page: 300ms;
+  --motion-stagger: 65ms;
+  --motion-distance: 14px;
+  --motion-lift: -2px;
+  --ease-state: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-product: cubic-bezier(0.22, 0.61, 0.36, 1);
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -100,6 +116,98 @@
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
 }
+
+/* Scoped semantic mapping also applies inside the portalled mobile sheet. */
+.platform-theme {
+  --background: var(--surface-canvas);
+  --foreground: var(--text-ink);
+  --card: var(--surface-raised);
+  --card-foreground: var(--text-ink);
+  --popover: var(--surface-raised);
+  --popover-foreground: var(--text-ink);
+  --primary: var(--brand-evergreen);
+  --primary-foreground: #fff;
+  --secondary: var(--brand-tint);
+  --secondary-foreground: var(--brand-evergreen);
+  --muted: var(--surface-muted);
+  --muted-foreground: var(--text-ink-muted);
+  --accent: var(--brand-tint);
+  --accent-foreground: var(--brand-evergreen);
+  --border: var(--border-rule);
+  --input: var(--border-rule);
+  --ring: var(--brand-evergreen);
+  --radius: var(--product-radius);
+  color: var(--text-ink);
+  background: var(--surface-canvas);
+}
+
+@layer components {
+  .bis-page { width: 100%; max-width: var(--product-width); margin-inline: auto; padding: clamp(2rem, 4vw, 3.5rem) var(--product-gutter); }
+  .bis-stack { display: flex; min-width: 0; flex-direction: column; gap: var(--product-section-gap); }
+  .bis-intro { max-width: 48rem; }
+  .bis-eyebrow { font-family: var(--font-geist-mono), monospace; font-size: .75rem; line-height: 1.8; letter-spacing: .1em; text-transform: uppercase; color: var(--text-ink-muted); }
+  .bis-page-title { margin-top: 1rem; font-size: clamp(2.125rem, 3.5vw, 3rem); font-weight: 500; line-height: 1.12; letter-spacing: -.045em; text-wrap: balance; overflow-wrap: anywhere; }
+  .bis-section-title { font-size: clamp(1.25rem, 2vw, 1.5rem); font-weight: 500; line-height: 1.3; letter-spacing: -.025em; text-wrap: balance; }
+  .bis-card-title { font-size: 1rem; font-weight: 600; line-height: 1.5; letter-spacing: -.015em; }
+  .bis-lead { max-width: 42rem; margin-top: 1rem; font-size: 1rem; line-height: 1.8; color: var(--text-ink-muted); }
+  .bis-copy { font-size: .875rem; line-height: 1.75; color: var(--text-ink-muted); }
+  .bis-panel { min-width: 0; border: 1px solid var(--border-rule); border-radius: var(--product-radius); background: var(--surface-raised); }
+  .bis-panel-pad { padding: clamp(1.25rem, 3vw, 2rem); }
+  .bis-status { height: auto; max-width: 100%; gap: .375rem; border-radius: .25rem; border-color: var(--border-rule); padding: .25rem .5rem; white-space: normal; font-size: .75rem; line-height: 1.5; color: var(--text-ink-muted); background: var(--surface-canvas); }
+  .bis-status[data-capability="integrated"], .bis-status[data-capability="available"] { color: var(--brand-evergreen); background: var(--brand-tint); border-color: transparent; }
+  .bis-nav-link { display: flex; min-height: 3rem; align-items: center; gap: .75rem; border: 1px solid transparent; border-radius: .375rem; padding: .625rem .75rem; font-size: .875rem; line-height: 1.5; color: var(--text-ink-muted); }
+  .bis-nav-link:hover { background: var(--surface-muted); color: var(--brand-evergreen); }
+  .bis-nav-link[aria-current="page"] { border-color: var(--border-rule); background: var(--brand-tint); color: var(--brand-evergreen); font-weight: 600; }
+  .bis-capability-link { display: flex; min-width: 0; flex-direction: column; gap: 1rem; padding: 1.5rem 0; border-top: 1px solid var(--border-rule); }
+  .bis-capability-link:hover { border-color: var(--brand-evergreen); }
+  .bis-disclosure { border-top: 1px solid var(--border-rule); padding-top: .5rem; }
+  .bis-disclosure > summary { min-height: 2.75rem; cursor: pointer; padding-block: .75rem; font-size: .875rem; font-weight: 500; color: var(--text-ink-muted); overflow-wrap: anywhere; }
+  .bis-disclosure > summary:hover, .bis-disclosure[open] > summary { color: var(--brand-evergreen); }
+  .bis-workflow { display: grid; gap: 0 1.5rem; }
+  .bis-workflow > li { display: grid; grid-template-columns: 1.75rem minmax(0, 1fr); gap: .75rem; padding-block: 1.25rem; border-top: 1px solid var(--border-rule); }
+  @media (width >= 40rem) { .bis-workflow { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (width >= 80rem) { .bis-workflow { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+}
+
+.platform-theme :where(a, button, input, textarea, summary):focus-visible { outline: 2px solid var(--brand-evergreen); outline-offset: 4px; }
+.platform-theme :where(a, button, summary) { -webkit-tap-highlight-color: transparent; }
+@media (prefers-reduced-motion: no-preference) {
+  :where(.platform-theme, .bis-landing) :where(a, button, input, textarea, summary) { transition: color var(--motion-micro) var(--ease-state), background-color var(--motion-micro) var(--ease-state), border-color var(--motion-micro) var(--ease-state), box-shadow var(--motion-standard) var(--ease-state), transform var(--motion-micro) var(--ease-product); }
+  .bis-enter { animation: bis-page-enter var(--motion-page) var(--ease-product) both; }
+  [data-reveal-state="waiting"] { opacity: 0; transform: translateY(var(--motion-distance)); }
+  [data-reveal-state="visible"] { animation: bis-reveal var(--motion-entrance) var(--ease-product) both; }
+  [data-reveal-state="visible"].bis-stagger { animation: none; }
+  [data-reveal-state="visible"].bis-stagger > *, .bis-result > :nth-child(-n+4) { animation: bis-reveal var(--motion-entrance) var(--ease-product) both; }
+  [data-reveal-state="visible"].bis-stagger > :nth-child(2), .bis-result > :nth-child(2) { animation-delay: var(--motion-stagger); }
+  [data-reveal-state="visible"].bis-stagger > :nth-child(n+3), .bis-result > :nth-child(n+3) { animation-delay: calc(var(--motion-stagger) * 2); }
+  .bis-hero > * { animation: bis-reveal var(--motion-entrance) var(--ease-product) both; }
+  .bis-hero > :nth-child(2) { animation-delay: var(--motion-stagger); }
+  .bis-nav-link { transition-duration: var(--motion-standard); }
+  .platform-theme[data-slot="sheet-content"] { transition-duration: var(--motion-standard); transition-timing-function: var(--ease-state); }
+  .bis-nav-link > svg, .bis-action-icon, .bis-landing a > svg:last-child { transition: transform var(--motion-micro) var(--ease-product); }
+  .bis-nav-link[aria-current="page"] > svg { transform: translateX(2px); }
+  :where(a, button):is(:hover, :focus-visible) .bis-action-icon, .bis-landing a:is(:hover, :focus-visible) > svg:last-child { transform: translateX(3px); }
+  :where(.platform-theme, .bis-landing) :where([data-slot="button"], .group\/button):active:not(:disabled):not([aria-disabled="true"]) { transform: scale(.98); }
+  .bis-disclosure[open] > :not(summary) { animation: bis-detail-enter var(--motion-standard) var(--ease-product) both; }
+  /* Native discrete transitions progressively enhance closing, without height measurement. */
+  @supports selector(details::details-content) {
+    .bis-disclosure::details-content { opacity: 0; transition: opacity var(--motion-standard) var(--ease-state), content-visibility var(--motion-standard) allow-discrete; }
+    .bis-disclosure[open]::details-content { opacity: 1; }
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .bis-capability-link:is(:hover, :focus-visible) { transform: translateY(var(--motion-lift)); }
+    :where(.platform-theme, .bis-landing) :where([data-slot="button"], .group\/button):hover:not(:active):not(:disabled):not([aria-disabled="true"]) { transform: translateY(-1px); }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after, details::details-content { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+  [data-reveal-state] { opacity: 1 !important; transform: none !important; }
+  :where(.platform-theme, .bis-landing) :where(a, button, svg):is(:hover, :active, :focus-visible) { transform: none !important; translate: none !important; }
+}
+@media (width < 40rem) { :root { --motion-distance: 8px; } }
+@keyframes bis-page-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bis-reveal { from { opacity: 0; transform: translateY(var(--motion-distance)); } to { opacity: 1; transform: translateY(0); } }
+@keyframes bis-detail-enter { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
 .dark {
   --background: oklch(0.145 0 0);

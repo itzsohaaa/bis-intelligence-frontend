@@ -3,7 +3,7 @@ import {
   MessageSquareText, Microscope, NotebookTabs, type LucideIcon,
 } from "lucide-react";
 
-export type CapabilityStatus = "foundation" | "supported" | "planned";
+export type CapabilityStatus = "available" | "integrated" | "backend-dependent" | "planned";
 
 type NavigationItem = {
   href: `/${string}`;
@@ -15,36 +15,36 @@ type NavigationItem = {
 
 export const navigation = {
   home: {
-    href: "/", label: "Landing page", icon: Home, status: "foundation",
+    href: "/", label: "Landing page", icon: Home, status: "available",
     description: "BIS Intelligence Platform.",
   },
   dashboard: {
-    href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, status: "foundation",
+    href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, status: "available",
     description: "Your starting point for standards intelligence and BIS services.",
   },
   askBis: {
-    href: "/ask-bis", label: "Ask BIS", icon: MessageSquareText, status: "supported",
+    href: "/ask-bis", label: "Ask BIS", icon: MessageSquareText, status: "integrated",
     description: "A workspace for evidence-grounded questions, answers, and source references.",
   },
   productIntelligence: {
-    href: "/product-intelligence", label: "Product intelligence", icon: Boxes, status: "planned",
-    description: "A future experience for exploring standards relevant to a product.",
+    href: "/product-intelligence", label: "Product intelligence", icon: Boxes, status: "backend-dependent",
+    description: "Connect product context to standards, obligations, and the evidence behind applicability.",
   },
   standards: {
-    href: "/standards", label: "Standards", icon: BookOpen, status: "planned",
-    description: "A planned space for standards discovery and detailed evidence.",
+    href: "/standards", label: "Standards", icon: BookOpen, status: "backend-dependent",
+    description: "Explore standards through their scope, source documents, and supporting clauses.",
   },
   certification: {
-    href: "/certification", label: "Certification", icon: ClipboardCheck, status: "planned",
-    description: "A planned guide to certification pathways and related BIS services.",
+    href: "/certification", label: "Certification", icon: ClipboardCheck, status: "backend-dependent",
+    description: "Understand certification pathways and the preparation each may require.",
   },
   laboratories: {
-    href: "/laboratories", label: "Laboratories", icon: Microscope, status: "planned",
-    description: "A planned experience for laboratory and testing information.",
+    href: "/laboratories", label: "Laboratories", icon: Microscope, status: "backend-dependent",
+    description: "Bring testing requirements and relevant laboratory information into context.",
   },
   hallmarking: {
-    href: "/hallmarking", label: "Hallmarking", icon: Gem, status: "planned",
-    description: "A planned space for hallmarking information and supporting evidence.",
+    href: "/hallmarking", label: "Hallmarking", icon: Gem, status: "backend-dependent",
+    description: "Understand hallmarking requirements through regulatory evidence and currentness checks.",
   },
   passport: {
     href: "/passport", label: "Compliance passport", icon: NotebookTabs, status: "planned",

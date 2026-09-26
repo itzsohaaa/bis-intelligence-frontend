@@ -6,35 +6,32 @@ import { useState, type ReactNode } from "react";
 import { Menu, ShieldCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { CapabilityStatus } from "./capability-status";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { isRouteActive, navigation, platformNavigation } from "@/config/navigation";
-import { cn } from "@/lib/utils";
 
 function PlatformNavigation({ pathname, onNavigate }: {
   pathname: string;
   onNavigate?: () => void;
 }) {
   return (
-    <nav aria-label="Platform navigation" className="space-y-1 p-3">
+    <nav aria-label="Platform navigation" className="space-y-1 p-4">
+      <p className="bis-eyebrow px-3 pb-3 pt-2">Workspace</p>
       {platformNavigation.map(({ href, label, icon: Icon, status }) => {
         const active = isRouteActive(pathname, href);
         return (
           <Link key={href} href={href} onClick={onNavigate}
             aria-current={active ? "page" : undefined}
-            className={cn(
-              "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2 text-sm outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring",
-              active ? "bg-sidebar-primary font-medium text-sidebar-primary-foreground" : "text-sidebar-foreground hover:bg-sidebar-accent",
-            )}>
+            className="bis-nav-link">
             <Icon aria-hidden="true" className="size-4 shrink-0" />
             <span className="flex-1">{label}</span>
-            {status === "planned" && <span className="text-[10px] uppercase tracking-wide">Planned</span>}
+            {status === "planned" && <span className="text-xs font-normal">Planned</span>}
           </Link>
         );
       })}
       <div className="mt-4 border-t pt-3">
         <Link href={navigation.home.href} onClick={onNavigate}
-          className="flex min-h-11 items-center gap-3 rounded-lg px-3 text-sm text-muted-foreground outline-none hover:bg-sidebar-accent focus-visible:ring-2 focus-visible:ring-ring">
+          className="bis-nav-link">
           <navigation.home.icon aria-hidden="true" className="size-4" />
           {navigation.home.label}
         </Link>
@@ -49,41 +46,41 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
   const currentPage = platformNavigation.find((item) => isRouteActive(pathname, item.href));
 
   return (
-    <div className="min-h-dvh bg-background lg:pl-72">
+    <div className="platform-theme min-h-dvh lg:pl-64 xl:pl-68">
       <a href="#platform-content" className="sr-only z-50 rounded-md bg-background p-3 focus:not-sr-only focus:fixed focus:top-3 focus:left-3">
         Skip to content
       </a>
-      <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col border-r bg-sidebar lg:flex">
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-rule bg-white lg:flex xl:w-68">
         <Link href={navigation.dashboard.href} className="flex min-h-20 items-center gap-3 border-b px-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
-          <ShieldCheck aria-hidden="true" className="size-7" />
+          <ShieldCheck aria-hidden="true" className="size-7 shrink-0 text-brand" />
           <span><span className="block font-semibold tracking-tight">BIS Intelligence</span><span className="text-xs text-muted-foreground">Standards. Evidence. Clarity.</span></span>
         </Link>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <PlatformNavigation pathname={pathname} />
         </div>
-        <p className="border-t p-6 text-xs leading-relaxed text-muted-foreground">Platform preview. BIS services are not connected yet.</p>
+        <div className="border-t border-rule p-6"><p className="text-sm font-medium text-brand">Evidence at every step.</p><p className="mt-2 text-xs leading-5 text-ink-muted">Ask BIS is integrated. Other intelligence modules await backend availability.</p></div>
       </aside>
-      <header className="sticky top-0 z-20 flex min-h-20 items-center gap-3 border-b bg-background px-4 sm:px-8">
+      <header className="sticky top-0 z-20 flex min-h-18 items-center gap-3 border-b border-rule bg-canvas px-5 sm:px-8">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
           <SheetTrigger render={<Button variant="outline" size="icon" className="size-11 lg:hidden" aria-label="Open navigation" />}>
             <Menu aria-hidden="true" />
           </SheetTrigger>
-          <SheetContent side="left" className="w-[min(20rem,90vw)]! overflow-y-auto bg-sidebar">
+          <SheetContent side="left" className="platform-theme w-[min(20rem,90vw)]! overflow-y-auto bg-white [&_[data-slot=sheet-close]]:size-11">
             <SheetHeader className="pr-12">
               <SheetTitle>BIS Intelligence</SheetTitle>
-              <SheetDescription>Platform preview · services not connected</SheetDescription>
+              <SheetDescription>Standards. Evidence. Clarity.</SheetDescription>
             </SheetHeader>
             <PlatformNavigation pathname={pathname} onNavigate={() => setMobileOpen(false)} />
           </SheetContent>
         </Sheet>
         <div className="min-w-0 flex-1">
-          <p className="text-xs text-muted-foreground">BIS Intelligence Platform</p>
-          <p className="truncate text-sm font-medium">{currentPage?.label ?? "Platform"}</p>
+          <p className="text-xs text-ink-muted">BIS Intelligence</p>
+          <p className="text-sm font-medium leading-5">{currentPage?.label ?? "Platform"}</p>
         </div>
-        <Badge variant="outline">Preview</Badge>
+        <div className="hidden sm:block">{currentPage && <CapabilityStatus status={currentPage.status} />}</div>
       </header>
-      <main id="platform-content" tabIndex={-1} className="mx-auto max-w-6xl px-4 py-10 outline-none sm:px-8 sm:py-14">
-        {children}
+      <main id="platform-content" tabIndex={-1} className="bis-page outline-none">
+        <div key={pathname} className="bis-enter min-w-0">{children}</div>
       </main>
     </div>
   );

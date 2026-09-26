@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SectionReveals } from "@/components/motion/section-reveals";
 
 import "./globals.css";
 
@@ -34,6 +35,7 @@ export default function RootLayout({
     >
       <body>
         <TooltipProvider>{children}</TooltipProvider>
+        <SectionReveals />
       </body>
     </html>
   );

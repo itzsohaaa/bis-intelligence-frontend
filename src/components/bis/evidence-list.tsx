@@ -1,3 +1,5 @@
+import { citationFields } from "@/lib/bis/presentation";
+import { FormattedAnswer } from "./formatted-answer";
 import { ExternalLink, FileText } from "lucide-react";
 import { isRecord, safeSourceUrl } from "@/lib/bis/normalize";
 import type { EvidenceRecord } from "@/lib/bis/types";
@@ -32,13 +34,33 @@ export function EvidenceFields({ record, depth = 0 }: { record: EvidenceRecord; 
 }
 
 export function EvidenceList({ title, items }: { title: string; items: EvidenceRecord[] }) {
-  return <section className="min-w-0 space-y-3" aria-label={title}>
-    <h3 className="flex items-center gap-2 text-sm font-semibold"><FileText aria-hidden="true" className="size-4 text-brand" />{title} <span className="font-mono text-xs text-ink-muted">({items.length})</span></h3>
-    {items.length === 0 ? <p className="border border-dashed border-rule p-4 text-sm leading-6 text-ink-muted">No {title.toLowerCase()} supplied. This does not establish that the answer is verified.</p> : items.map((item, index) => (
-      <details key={index} open={index === 0} className="rounded-md border border-rule bg-white p-4">
-        <summary className="cursor-pointer text-sm font-medium focus-visible:outline-2 focus-visible:outline-brand">{title === "Citations" ? "Citation" : "Source"} {index + 1}<span className="ml-2 text-xs font-normal text-ink-muted">Inspect supplied details</span></summary>
-        <div className="mt-5 border-t border-rule pt-4"><EvidenceFields record={item} /></div>
-      </details>
-    ))}
+  return <section className="min-w-0 space-y-4" aria-label={title}>
+    <h3 className="flex items-center gap-2 text-base font-semibold">
+      <FileText aria-hidden="true" focusable="false" className="size-4 shrink-0 text-brand" />
+      <span>{title}</span><span className="text-sm font-normal text-ink-muted">({items.length})</span>
+    </h3>
+    {items.length === 0 ? <p className="border border-dashed border-rule p-5 text-sm leading-6 text-ink-muted">No {title.toLowerCase()} supplied. This does not establish that the answer is verified.</p> : items.map((item, index) => {
+      const fields = citationFields(item);
+      const excerpt = fields.find((field) => field.label === "Excerpt");
+      const source = fields.find((field) => field.label === "Source URL");
+      const href = source ? safeSourceUrl(source.value) : null;
+      const metadata = fields.filter((field) => field.label !== "Excerpt" && field.label !== "Source URL");
+      return <article key={index} className="bis-panel bis-panel-pad">
+        <p className="mb-4 font-mono text-xs text-ink-muted">{title === "Citations" ? "Citation" : "Source"} {index + 1}</p>
+        {metadata.length > 0 && <dl className="grid grid-cols-1 gap-x-6 gap-y-3 text-sm leading-6 sm:grid-cols-2">
+          {metadata.map(({ label, value }) => <div key={label} className={label === "Title" || label === "Source file" ? "min-w-0 sm:col-span-2" : "min-w-0"}>
+            <dt className="text-xs text-ink-muted">{label}</dt>
+            <dd className="mt-0.5 font-medium [overflow-wrap:anywhere]">{value}</dd>
+          </div>)}
+        </dl>}
+        {excerpt && <blockquote className="mt-4 border-l-2 border-rule pl-4 text-sm leading-7 text-ink-muted [overflow-wrap:anywhere]"><FormattedAnswer text={excerpt.value} /></blockquote>}
+        {fields.length === 0 && <p className="text-sm leading-6 text-ink-muted">No citation summary supplied. Additional source details are available below.</p>}
+        {href && <a href={href} target="_blank" rel="noopener noreferrer" className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-brand underline underline-offset-4 focus-visible:outline-2">Open source<ExternalLink aria-hidden="true" focusable="false" className="size-3.5" /><span className="sr-only"> (opens in a new tab)</span></a>}
+        <details className="bis-disclosure mt-4">
+          <summary className="cursor-pointer py-3 text-sm text-ink-muted focus-visible:outline-2 focus-visible:outline-brand">Inspect details<span className="sr-only"> for {title === "Citations" ? "citation" : "source"} {index + 1}</span></summary>
+          <div className="mt-3"><EvidenceFields record={item} /></div>
+        </details>
+      </article>;
+    })}
   </section>;
 }
