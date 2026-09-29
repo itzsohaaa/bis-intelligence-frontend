@@ -1,9 +1,15 @@
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
 import test from "node:test";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import ts from "typescript";
+import { mkdir, writeFile, readFile } from "node:fs/promises";
+import { join } from "node:path";
+import { fileURLToPath, pathToFileURL } from "node:url";
+
+const testDir = fileURLToPath(new URL(".", import.meta.url));
+const tmpDir = join(testDir, ".tmp");
+await mkdir(tmpDir, { recursive: true });
 
 async function loadUrl(path, imports = {}) {
   const source = await readFile(new URL(path, import.meta.url), "utf8");
@@ -12,7 +18,9 @@ async function loadUrl(path, imports = {}) {
   } });
   const dependencies = { react: import.meta.resolve("react"), "react/jsx-runtime": import.meta.resolve("react/jsx-runtime"), "lucide-react": import.meta.resolve("lucide-react"), ...imports };
   for (const [name, url] of Object.entries(dependencies)) outputText = outputText.replaceAll(JSON.stringify(name), JSON.stringify(url));
-  return `data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`;
+  const tmpFile = join(tmpDir, `bis-test-${Math.random().toString(36).slice(2)}.mjs`);
+  await writeFile(tmpFile, outputText, "utf8");
+  return pathToFileURL(tmpFile).href;
 }
 const normalize = await loadUrl("../src/lib/bis/normalize.ts");
 const presentation = await loadUrl("../src/lib/bis/presentation.ts");
@@ -114,10 +122,11 @@ test("candidate standards harmonize wording and suppress raw evidence tags in pr
     claims: [{ claim_text: "Cookers require ISI mark", entailment_status: "SUPPORTED", citation_keys: ["EV1"] }],
   }).data;
 
-  // Verify conclusion resolution avoids contradictory wording
+  // Verify conclusion resolution avoids contradictory wording and hides candidate commentary
   const conclusion = resolveUserFacingConclusion(queryData);
   assert.equal(conclusion.isCandidateAmbiguity, true);
-  assert.match(conclusion.headline, /I found 2 possible standards, but I couldn't verify which one applies to pressure cooker/i);
+  assert.equal(conclusion.headline, "Verification Required");
+  assert.match(conclusion.plainReason, /could not be verified with sufficient certainty/i);
 
   // Verify raw evidence tags are cleaned from user-facing answer
   assert.equal(cleanUserFacingText(queryData.answer), "Pressure cookers must comply with IS 2347.");
@@ -125,10 +134,76 @@ test("candidate standards harmonize wording and suppress raw evidence tags in pr
   // Verify qualitative confidence
   assert.equal(formatQualitativeConfidence("LOW", 0.32), "Low Confidence (Verification Advised)");
 
-  // Render view and verify progressive disclosure structure
+  // Render view and verify direct answer visual hierarchy
   const html = render(QueryResultView, { result: { data: queryData, notices: [] } });
-  assert.match(html, /I found 2 possible standards, but I couldn(?:&#x27;|')t verify which one applies to pressure cooker/i);
+  assert.match(html, /Pressure cookers must comply with IS 2347\./);
+  assert.match(html, /Verification note:/);
+  assert.match(html, /Source:/);
+  assert.match(html, /IS 2347:2017/);
+  assert.match(html, /View Evidence/);
+  assert.ok(!html.includes("PIPELINE STATE"));
+  assert.ok(!html.includes("Inquiry:"));
+  assert.ok(!html.includes("I found 2 possible standards"));
   assert.match(html, /Candidate Standards \(2\)/);
   assert.match(html, /Not Confirmed/);
   assert.match(html, /View verification details &amp; evidence/);
+});
+
+test("formatUserFacingAnswer transforms internal pipeline boilerplate into direct answer and verification note", async () => {
+  const { formatUserFacingAnswer } = await import(presentation);
+
+  // 1. IS 9873 with internal grounding failure diagnostic
+  const toyQuery = normalizeQueryResponse({
+    query: "What does IS 9873 say about toy safety?",
+    answer: "Verification Required: The generated response contains ungrounded claims that could not be verified against authoritative BIS standard text (Grounding validation detected 2 unsupported claim(s).). Manual regulatory verification is required.",
+    decision: "verification_required",
+    query_state: "CONFLICTING_EVIDENCE",
+    verification_required: true,
+    citations: [{ standard_number: "IS 9873", standard_title: "Safety of Toys", excerpt: "Clause 7 electrical safety" }],
+    candidate_standards: [{ standard_number: "IS 9873", is_mandatory: true, qco_number: "S.O. 858(E)" }],
+    sources: [{ standard_number: "IS 9873" }],
+    retrieved_chunks: 5,
+  }).data;
+
+  const toyFormatted = formatUserFacingAnswer(toyQuery);
+  assert.equal(toyFormatted.status.type, "VERIFICATION_REQUIRED");
+  assert.equal(toyFormatted.directAnswer, "IS 9873 covers the relevant toy safety requirements described in the retrieved standard provisions.");
+  assert.match(toyFormatted.verificationNote, /The retrieved provisions contain conflicting interpretations/);
+  assert.equal(toyFormatted.primarySource.standardNumber, "IS 9873");
+  assert.equal(toyFormatted.primarySource.isMandatory, true);
+  assert.ok(!toyFormatted.directAnswer.includes("ungrounded claims"));
+  assert.ok(!toyFormatted.directAnswer.includes("Grounding validation detected"));
+
+  // 2. IS 99999 negative control
+  const unkQuery = normalizeQueryResponse({
+    query: "What are the requirements for IS 99999?",
+    answer: "Verification Required: Standard not found in verified corpus.",
+    decision: "abstain",
+    grounding_status: "ungrounded",
+    retrieved_chunks: 0,
+    sources: [],
+    citations: [],
+  }).data;
+
+  const unkFormatted = formatUserFacingAnswer(unkQuery);
+  assert.equal(unkFormatted.status.type, "INSUFFICIENT_EVIDENCE");
+  assert.match(unkFormatted.directAnswer, /could not be verified with sufficient certainty/);
+  assert.match(unkFormatted.verificationNote, /No authoritative Indian Standard or gazetted order/);
+
+  // 3. Normal verified query (IS 694)
+  const cableQuery = normalizeQueryResponse({
+    query: "What is the scope of IS 694?",
+    answer: "IS 694:2010 specifies requirements for PVC cables up to 1100 V [EV1].",
+    decision: "answer",
+    grounding_status: "fully_grounded",
+    verification_required: false,
+    retrieved_chunks: 4,
+    citations: [{ standard_number: "IS 694:2010" }],
+  }).data;
+
+  const cableFormatted = formatUserFacingAnswer(cableQuery);
+  assert.equal(cableFormatted.status.type, "VERIFIED");
+  assert.equal(cableFormatted.directAnswer, "IS 694:2010 specifies requirements for PVC cables up to 1100 V.");
+  assert.equal(cableFormatted.verificationNote, null);
+  assert.equal(cableFormatted.primarySource.standardNumber, "IS 694:2010");
 });

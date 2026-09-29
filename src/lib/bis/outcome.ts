@@ -51,9 +51,14 @@ export interface UserFacingConclusion {
 
 export function resolveUserFacingConclusion(data: QueryResult): UserFacingConclusion {
   const candidateCount = data.candidate_standards?.length || 0;
+  const isUngrounded = Boolean(
+    data.grounding_status?.toLowerCase().includes("ungrounded") ||
+    data.grounding_status?.toLowerCase().includes("unsupported")
+  );
   const isGrounded =
-    data.grounding_status?.toLowerCase().includes("grounded") &&
-    !data.grounding_status?.toLowerCase().includes("un");
+    typeof data.grounding_status === "string" &&
+    data.grounding_status.toLowerCase().includes("grounded") &&
+    !isUngrounded;
   const isVerified =
     data.decision === "answer" &&
     Boolean(isGrounded) &&
@@ -76,12 +81,12 @@ export function resolveUserFacingConclusion(data: QueryResult): UserFacingConclu
       "this product";
 
     return {
-      headline: `I found ${candidateCount} possible standard${candidateCount > 1 ? "s" : ""}, but I couldn't verify which one applies to ${rawProduct}.`,
+      headline: "Verification Required",
       badgeLabel: "Verification Required",
       badgeType: "VERIFICATION_REQUIRED",
       plainReason:
         data.verification_reason ||
-        "The query matches multiple candidate standards in the BIS catalog. Review the candidate list below to inspect individual scope clauses and determine statutory applicability.",
+        "Based on the retrieved provisions, this requirement could not be verified with sufficient certainty.",
       isCandidateAmbiguity: true,
     };
   }

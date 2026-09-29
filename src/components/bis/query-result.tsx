@@ -21,6 +21,7 @@ import {
   cleanUserFacingText,
   currentness,
   formatQualitativeConfidence,
+  formatUserFacingAnswer,
   readableStatus,
 } from "@/lib/bis/presentation";
 import type { QuerySuccess } from "@/lib/bis/types";
@@ -81,88 +82,120 @@ export function QueryResultView({ result }: { result: QuerySuccess }) {
   // Clean answer text without raw [EV1], [EV2] tags for user-facing simplicity
   const displayAnswer = cleanUserFacingText(data.answer.trim());
 
+  const presentation = formatUserFacingAnswer(data);
+
   return (
     <section
       aria-labelledby="answer-heading"
       className="bis-result min-w-0 space-y-6 text-ink"
     >
-      {/* 1. Header: Progressive Disclosure Tier 1 (Status, Conclusion, Reason) */}
-      <header
-        className={cn(
-          "space-y-4 rounded-lg border p-5 sm:p-6 shadow-xs transition-colors",
-          userConclusion.badgeType === "VERIFIED"
-            ? "border-emerald-300/60 bg-emerald-50/40"
-            : userConclusion.badgeType === "INSUFFICIENT_EVIDENCE"
-              ? "border-slate-300/80 bg-slate-50/70"
-              : userConclusion.badgeType === "QUALIFIED"
-                ? "border-blue-300/60 bg-blue-50/40"
-                : "border-amber-300/70 bg-amber-50/50",
-        )}
-      >
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-xs font-semibold uppercase tracking-[var(--tracking-eyebrow)] text-ink-muted">
-            Statutory Verification & Evidence
-          </p>
+      {/* 1. Primary Direct Answer Card (Direct Answer -> Verification Note -> Source -> View Evidence) */}
+      <article className="rounded-xl border border-rule bg-canvas p-6 sm:p-7 shadow-xs space-y-5">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-rule/60 pb-3">
+          <div className="flex items-center gap-2">
+            <FileSearch className="size-4 text-brand" />
+            <h2 id="answer-heading" className="text-xs font-bold uppercase tracking-wider text-ink-muted">
+              Answer
+            </h2>
+          </div>
 
           {/* Status Badge */}
           <span
             className={cn(
               "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold tracking-wide border shadow-2xs",
-              userConclusion.badgeType === "VERIFIED"
+              presentation.status.type === "VERIFIED"
                 ? "border-emerald-300 bg-emerald-100 text-emerald-800"
-                : userConclusion.badgeType === "INSUFFICIENT_EVIDENCE"
+                : presentation.status.type === "INSUFFICIENT_EVIDENCE"
                   ? "border-slate-300 bg-slate-200 text-slate-800"
-                  : userConclusion.badgeType === "QUALIFIED"
+                  : presentation.status.type === "QUALIFIED"
                     ? "border-blue-300 bg-blue-100 text-blue-800"
                     : "border-amber-300 bg-amber-100 text-amber-900",
             )}
           >
-            {userConclusion.badgeType === "VERIFIED" ? (
+            {presentation.status.type === "VERIFIED" ? (
               <CheckCircle2 className="size-3.5" />
-            ) : userConclusion.badgeType === "INSUFFICIENT_EVIDENCE" ? (
+            ) : presentation.status.type === "INSUFFICIENT_EVIDENCE" ? (
               <HelpCircle className="size-3.5" />
-            ) : userConclusion.badgeType === "QUALIFIED" ? (
+            ) : presentation.status.type === "QUALIFIED" ? (
               <Info className="size-3.5" />
             ) : (
               <AlertTriangle className="size-3.5" />
             )}
-            <span>{userConclusion.badgeLabel}</span>
+            <span>{presentation.status.label}</span>
           </span>
         </div>
 
-        {/* Conclusion Headline */}
-        <h2
-          id="answer-heading"
-          className={cn(
-            "text-xl sm:text-2xl font-bold tracking-tight",
-            userConclusion.badgeType === "VERIFIED"
-              ? "text-emerald-900"
-              : userConclusion.badgeType === "INSUFFICIENT_EVIDENCE"
-                ? "text-slate-800"
-                : userConclusion.badgeType === "QUALIFIED"
-                  ? "text-blue-900"
-                  : "text-amber-950",
-          )}
-        >
-          {userConclusion.headline}
-        </h2>
+        {/* 1. DIRECT ANSWER */}
+        <div className="text-base sm:text-lg leading-relaxed text-ink font-normal">
+          <FormattedAnswer
+            text={
+              presentation.directAnswer.length > 0
+                ? presentation.directAnswer
+                : "No answer text was supplied. Review the evidence and verification status."
+            }
+          />
+        </div>
 
-        {/* Plain-Language Reason */}
-        <p className="text-sm leading-relaxed text-ink/80 max-w-3xl">
-          {userConclusion.plainReason}
-        </p>
-
-        {data.query_state && (
-          <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">
-            Pipeline State: {readableStatus(data.query_state)}
-          </p>
+        {/* 2. OPTIONAL Concise Verification Note */}
+        {presentation.verificationNote && (
+          <div className="rounded-lg border border-amber-200/80 bg-amber-50/70 p-4 text-sm text-amber-950 flex items-start gap-2.5">
+            <AlertTriangle className="size-4 text-amber-600 shrink-0 mt-0.5" />
+            <div>
+              <strong className="font-semibold text-amber-900">Verification note: </strong>
+              <span>{presentation.verificationNote}</span>
+            </div>
+          </div>
         )}
 
-        <div className="border-t border-ink/10 pt-3 text-xs leading-relaxed [overflow-wrap:anywhere] text-ink-muted">
-          <span className="font-semibold text-ink">Inquiry: </span>
-          {data.query}
+        {/* 3. SOURCE / STANDARD IDENTIFIER & VIEW EVIDENCE ACTION */}
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-rule/70 bg-canvas-subtle/50 px-4 py-3 text-sm">
+          {presentation.primarySource ? (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                Source:
+              </span>
+              <span className="font-bold text-brand text-sm sm:text-base">
+                {presentation.primarySource.standardNumber}
+              </span>
+              {presentation.primarySource.title && (
+                <span className="text-xs text-ink-muted hidden md:inline">
+                  — {presentation.primarySource.title}
+                </span>
+              )}
+              {presentation.primarySource.isMandatory && (
+                <span className="ml-1 rounded bg-accent-soft px-2 py-0.5 text-xs font-semibold text-accent">
+                  Mandatory QCO
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold uppercase tracking-wider text-ink-muted">
+                Source:
+              </span>
+              <span className="text-xs text-ink-muted">
+                {data.sources.length > 0 ? "Multiple Regulatory Provisions" : "No indexed standard identified"}
+              </span>
+            </div>
+          )}
+
+          {/* Quick View Evidence trigger */}
+          <button
+            type="button"
+            onClick={() => {
+              const el = document.getElementById("bis-evidence-drawer") as HTMLDetailsElement | null;
+              if (el) {
+                el.open = true;
+                el.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand hover:underline"
+          >
+            <span>View Evidence ({data.citations.length})</span>
+            <ExternalLink className="size-3.5" />
+          </button>
         </div>
-      </header>
+      </article>
 
       {notices.length > 0 && (
         <div className="space-y-2 border-l-2 border-caution pl-4 text-sm leading-6 text-ink-muted">
@@ -171,23 +204,6 @@ export function QueryResultView({ result }: { result: QuerySuccess }) {
           ))}
         </div>
       )}
-
-      {/* 2. Primary Direct Answer */}
-      <article className="bis-panel bis-panel-pad shadow-xs">
-        <h3 className="mb-4 text-base font-semibold text-ink flex items-center gap-2">
-          <FileSearch className="size-4 text-brand" />
-          Direct Assessment
-        </h3>
-        <div className="text-base leading-relaxed text-ink">
-          <FormattedAnswer
-            text={
-              displayAnswer.length > 0
-                ? displayAnswer
-                : "No answer text was supplied. Review the evidence and verification status."
-            }
-          />
-        </div>
-      </article>
 
       {/* 3. Candidate Standards: Collapsible to avoid visual competition / false confirmation */}
       {hasCandidates && (
@@ -324,6 +340,7 @@ export function QueryResultView({ result }: { result: QuerySuccess }) {
 
       {/* 6. Progressive Disclosure Tier 2: Forensic Verification, Citations & Entailment Drawer */}
       <details
+        id="bis-evidence-drawer"
         className="bis-disclosure group rounded-lg border border-rule bg-canvas shadow-xs"
         data-tour="ask-bis-evidence"
       >
