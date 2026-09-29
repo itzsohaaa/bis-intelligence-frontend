@@ -5,6 +5,27 @@ export function readableStatus(value: string): string {
   return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
+export function cleanUserFacingText(text: string): string {
+  if (!text) return "";
+  return text.replace(/\s*\[(?:EV\d+|DOC\d+|PASSAGE\d+|CITATION\d+)\]/gi, "");
+}
+
+export function formatQualitativeConfidence(level?: string | null, score?: number | null): string {
+  if (level) {
+    const l = level.toLowerCase();
+    if (l === "high") return "High Confidence";
+    if (l === "medium") return "Moderate Confidence";
+    if (l === "low") return "Low Confidence (Verification Advised)";
+    return readableStatus(level);
+  }
+  if (typeof score === "number") {
+    if (score >= 0.8) return "High Confidence";
+    if (score >= 0.5) return "Moderate Confidence";
+    return "Requires Human Verification";
+  }
+  return "Not supplied";
+}
+
 export function currentness(result: QueryResult): string {
   const status = result.temporal_status ? readableStatus(result.temporal_status) : null;
   if (result.temporal_conflict) return status ? `${status} · conflicting evidence` : "Conflicting evidence";

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ModuleWorkspace } from "@/components/platform/module-workspace";
+import { CertificationWorkspace } from "@/components/bis/certification-workspace";
 import { navigation } from "@/config/navigation";
 
 export const metadata: Metadata = {
@@ -7,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <ModuleWorkspace page="certification" />;
+  return <CertificationWorkspace />;
 }

@@ -1,6 +1,14 @@
 import {
-  BookOpen, Boxes, ClipboardCheck, Gem, Home, LayoutDashboard,
-  MessageSquareText, Microscope, NotebookTabs, type LucideIcon,
+  BookOpen,
+  Boxes,
+  ClipboardCheck,
+  Gem,
+  Home,
+  LayoutDashboard,
+  MessageSquareText,
+  Microscope,
+  NotebookTabs,
+  type LucideIcon,
 } from "lucide-react";
 
 export type CapabilityStatus = "available" | "integrated" | "backend-dependent" | "planned";
@@ -15,40 +23,67 @@ type NavigationItem = {
 
 export const navigation = {
   home: {
-    href: "/", label: "Landing page", icon: Home, status: "available",
+    href: "/",
+    label: "Landing page",
+    icon: Home,
+    status: "available",
     description: "BIS Intelligence Platform.",
   },
   dashboard: {
-    href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, status: "available",
+    href: "/dashboard",
+    label: "Dashboard",
+    icon: LayoutDashboard,
+    status: "available",
     description: "Your starting point for standards intelligence and BIS services.",
   },
   askBis: {
-    href: "/ask-bis", label: "Ask BIS", icon: MessageSquareText, status: "integrated",
+    href: "/ask-bis",
+    label: "Ask BIS",
+    icon: MessageSquareText,
+    status: "available",
     description: "A workspace for evidence-grounded questions, answers, and source references.",
   },
   productIntelligence: {
-    href: "/product-intelligence", label: "Product intelligence", icon: Boxes, status: "backend-dependent",
+    href: "/product-intelligence",
+    label: "Product intelligence",
+    icon: Boxes,
+    status: "available",
     description: "Connect product context to standards, obligations, and the evidence behind applicability.",
   },
   standards: {
-    href: "/standards", label: "Standards", icon: BookOpen, status: "backend-dependent",
+    href: "/standards",
+    label: "Standards",
+    icon: BookOpen,
+    status: "available",
     description: "Explore standards through their scope, source documents, and supporting clauses.",
   },
   certification: {
-    href: "/certification", label: "Certification", icon: ClipboardCheck, status: "backend-dependent",
+    href: "/certification",
+    label: "Certification",
+    icon: ClipboardCheck,
+    status: "available",
     description: "Understand certification pathways and the preparation each may require.",
   },
   laboratories: {
-    href: "/laboratories", label: "Laboratories", icon: Microscope, status: "backend-dependent",
+    href: "/laboratories",
+    label: "Laboratories",
+    icon: Microscope,
+    status: "available",
     description: "Bring testing requirements and relevant laboratory information into context.",
   },
   hallmarking: {
-    href: "/hallmarking", label: "Hallmarking", icon: Gem, status: "backend-dependent",
+    href: "/hallmarking",
+    label: "Hallmarking",
+    icon: Gem,
+    status: "available",
     description: "Understand hallmarking requirements through regulatory evidence and currentness checks.",
   },
   passport: {
-    href: "/passport", label: "Compliance passport", icon: NotebookTabs, status: "planned",
-    description: "A future Product Compliance Passport experience.",
+    href: "/passport",
+    label: "Compliance passport",
+    icon: NotebookTabs,
+    status: "available",
+    description: "Auditable Product Compliance Passport dossiers derived from verified corpus facts.",
   },
 } as const satisfies Record<string, NavigationItem>;
 

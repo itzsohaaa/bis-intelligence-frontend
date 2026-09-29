@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
-import { Menu, ShieldCheck } from "lucide-react";
+import { useEffect, useState, type ReactNode } from "react";
+import { Compass, Menu, ShieldCheck, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { CapabilityStatus } from "./capability-status";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { isRouteActive, navigation, platformNavigation } from "@/config/navigation";
+import { ProductTour } from "@/components/tour/product-tour";
 
 function PlatformNavigation({ pathname, onNavigate }: {
   pathname: string;
@@ -25,7 +26,7 @@ function PlatformNavigation({ pathname, onNavigate }: {
             className="bis-nav-link">
             <Icon aria-hidden="true" className="size-4 shrink-0" />
             <span className="flex-1">{label}</span>
-            {status === "planned" && <span className="bis-meta">Planned</span>}
+            {(status as string) === "planned" && <span className="bis-meta">Planned</span>}
           </Link>
         );
       })}
@@ -43,7 +44,29 @@ function PlatformNavigation({ pathname, onNavigate }: {
 export function ApplicationShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
   const currentPage = platformNavigation.find((item) => isRouteActive(pathname, item.href));
+
+  // Check if tour has ever been completed on initial mount
+  useEffect(() => {
+    try {
+      const completed = localStorage.getItem("bis-intelligence-tour-completed");
+      if (
+        !completed &&
+        (pathname === "/" || pathname === "/dashboard") &&
+        typeof window !== "undefined" &&
+        !window.navigator.webdriver
+      ) {
+        // Start tour after brief page hydration
+        const timer = setTimeout(() => {
+          setTourOpen(true);
+        }, 1200);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // ignore
+    }
+  }, [pathname]);
 
   return (
     <div className="platform-theme min-h-dvh lg:pl-64 xl:pl-68">
@@ -51,14 +74,24 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
         Skip to content
       </a>
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-rule bg-white lg:flex xl:w-68">
-        <Link href={navigation.dashboard.href} className="flex min-h-20 items-center gap-3 border-b px-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring">
+        <Link
+          href={navigation.dashboard.href}
+          data-tour="platform-brand"
+          className="flex min-h-20 items-center gap-3 border-b px-6 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+        >
           <ShieldCheck aria-hidden="true" className="size-7 shrink-0 text-brand" />
-          <span><span className="block font-semibold tracking-tight">BIS Intelligence</span><span className="bis-meta text-muted-foreground">Standards. Evidence. Clarity.</span></span>
+          <span>
+            <span className="block font-semibold tracking-tight">BIS Intelligence</span>
+            <span className="bis-meta text-muted-foreground">Standards. Evidence. Clarity.</span>
+          </span>
         </Link>
         <div className="min-h-0 flex-1 overflow-y-auto">
           <PlatformNavigation pathname={pathname} />
         </div>
-        <div className="border-t border-rule p-6"><p className="text-sm font-medium text-brand">Evidence at every step.</p><p className="bis-meta mt-2 text-ink-muted">Ask BIS is integrated. Other intelligence modules await backend availability.</p></div>
+        <div className="border-t border-rule p-6">
+          <p className="text-sm font-medium text-brand">Evidence at every step.</p>
+          <p className="bis-meta mt-2 text-ink-muted">Ask BIS is integrated. Other intelligence modules await backend availability.</p>
+        </div>
       </aside>
       <header className="sticky top-0 z-20 flex min-h-18 items-center gap-3 border-b border-rule bg-canvas px-5 sm:px-8">
         <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
@@ -77,11 +110,29 @@ export function ApplicationShell({ children }: { children: ReactNode }) {
           <p className="bis-meta text-ink-muted">BIS Intelligence</p>
           <p className="text-sm font-medium leading-5">{currentPage?.label ?? "Platform"}</p>
         </div>
+
+        {/* Tour launcher button in header */}
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          data-tour="tour-trigger"
+          onClick={() => setTourOpen(true)}
+          className="flex items-center gap-1.5 h-9 px-3 text-xs font-semibold text-brand border-brand/30 hover:bg-brand/5 shadow-2xs"
+          title="Interactive Product Tour"
+        >
+          <Compass className="size-3.5 text-brand" />
+          <span>Product Tour</span>
+        </Button>
+
         <div className="hidden sm:block">{currentPage && <CapabilityStatus status={currentPage.status} />}</div>
       </header>
       <main id="platform-content" tabIndex={-1} className="bis-page outline-none">
         <div key={pathname} className="bis-enter min-w-0">{children}</div>
       </main>
+
+      {/* Interactive Guided Tour */}
+      <ProductTour isActive={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 }

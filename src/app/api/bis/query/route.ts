@@ -32,7 +32,9 @@ export async function POST(request: Request) {
   let endpoint: URL;
   try {
     endpoint = new URL(serviceUrl);
-    if (endpoint.protocol !== "https:" || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
+    const isLocal = endpoint.hostname === "localhost" || endpoint.hostname === "127.0.0.1";
+    const isAllowedProto = endpoint.protocol === "https:" || (endpoint.protocol === "http:" && isLocal);
+    if (!isAllowedProto || endpoint.username || endpoint.password || endpoint.search || endpoint.hash) {
       return failure("NOT_CONFIGURED", 503);
     }
     endpoint = new URL("/query", endpoint);

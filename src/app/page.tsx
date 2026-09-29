@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Instrument_Serif } from "next/font/google";
 import { ArrowDown, ArrowRight, BookOpen, Boxes, ClipboardCheck, FileSearch, Gem, Languages, Microscope, Scale, ShieldCheck, ShieldQuestion } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
@@ -8,14 +7,9 @@ import { navigation } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import styles from "./landing.module.css";
 
-const editorial = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  weight: "400",
-  style: "normal",
-  subsets: ["latin"],
-  display: "optional",
-  adjustFontFallback: true,
-});
+const editorial = {
+  variable: "font-serif",
+};
 
 const capabilities = [
   { title: "Standards Intelligence", icon: BookOpen, description: "Ask questions grounded in ingested standards documents.", emphasized: true, status: "Integrated · Ask BIS" },

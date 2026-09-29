@@ -23,7 +23,8 @@ const result = await loadUrl("../src/components/bis/query-result.tsx", { "./evid
 const { FormattedAnswer } = await import(formatter);
 const { EvidenceList } = await import(evidence);
 const { QueryResultView } = await import(result);
-const { citationFields, currentness } = await import(presentation);
+const { citationFields, currentness, cleanUserFacingText, formatQualitativeConfidence } = await import(presentation);
+const { resolveUserFacingConclusion } = await import(outcome);
 const { normalizeQueryResponse } = await import(normalize);
 const render = (component, props) => renderToStaticMarkup(createElement(component, props));
 
@@ -93,4 +94,41 @@ test("currentness never assumes current when absent or conflicting", () => {
   const html = render(QueryResultView, { result: { data, notices: [] } });
   assert.match(html, /No answer text was supplied/);
   assert.match(html, /No citations were supplied/);
+});
+
+test("candidate standards harmonize wording and suppress raw evidence tags in primary view", () => {
+  const candidates = [
+    { standard_number: "IS 2347:2017", title: "Domestic Pressure Cookers", is_mandatory: true, match_reason: "Direct match" },
+    { standard_number: "IS 4390:2001", title: "Commercial Pressure Cookers", is_mandatory: false, match_reason: "Scope match" },
+  ];
+  const queryData = normalizeQueryResponse({
+    query: "IS for pressure cooker",
+    answer: "Pressure cookers must comply with IS 2347 [EV1] [EV2].",
+    sources: [{ source_hash: "hash1" }],
+    citations: [{ excerpt: "Clause 4.1 testing [EV1]" }],
+    retrieved_chunks: 3,
+    decision: "verification_required",
+    confidence_score: 0.32,
+    confidence_level: "LOW",
+    candidate_standards: candidates,
+    claims: [{ claim_text: "Cookers require ISI mark", entailment_status: "SUPPORTED", citation_keys: ["EV1"] }],
+  }).data;
+
+  // Verify conclusion resolution avoids contradictory wording
+  const conclusion = resolveUserFacingConclusion(queryData);
+  assert.equal(conclusion.isCandidateAmbiguity, true);
+  assert.match(conclusion.headline, /I found 2 possible standards, but I couldn't verify which one applies to pressure cooker/i);
+
+  // Verify raw evidence tags are cleaned from user-facing answer
+  assert.equal(cleanUserFacingText(queryData.answer), "Pressure cookers must comply with IS 2347.");
+
+  // Verify qualitative confidence
+  assert.equal(formatQualitativeConfidence("LOW", 0.32), "Low Confidence (Verification Advised)");
+
+  // Render view and verify progressive disclosure structure
+  const html = render(QueryResultView, { result: { data: queryData, notices: [] } });
+  assert.match(html, /I found 2 possible standards, but I couldn(?:&#x27;|')t verify which one applies to pressure cooker/i);
+  assert.match(html, /Candidate Standards \(2\)/);
+  assert.match(html, /Not Confirmed/);
+  assert.match(html, /View verification details &amp; evidence/);
 });
